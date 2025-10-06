@@ -1,0 +1,1 @@
+//Indeholder formler for score og vægtning ud fra difficulty og +/−/completion.

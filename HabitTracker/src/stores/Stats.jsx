@@ -1,0 +1,1 @@
+// Beregn og gem statistikdata (fx procent, score, grafer).

@@ -1,0 +1,1 @@
+//Funktioner til at hente, tilføje, redigere og slette habits + opdatere +/−.

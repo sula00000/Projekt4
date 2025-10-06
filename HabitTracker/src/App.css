@@ -1,42 +1,53 @@
-#root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
+/* Header / shell */
+.app-header{
+  position: sticky; top: 0;
+  backdrop-filter: saturate(130%) blur(8px);
+  background: rgba(19,23,34,.7);
+  border-bottom: 1px solid rgba(255,255,255,.06);
+  z-index: 50;
+}
+.app-header .container{
+  display:flex; align-items:center; gap: var(--space-4);
+  height: 64px;
 }
 
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
+/* Container – bruges overalt */
+.container{
+  width: 100%;
+  max-width: var(--container);
+  margin-inline: auto;
+  padding-inline: var(--space-4);
 }
 
-@keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
+/* Main område */
+.app-main{
+  padding: var(--space-8) 0;
+}
+
+/* Dashboard grid (forsiden) – start simpelt */
+.dashboard{
+  display: grid;
+  gap: var(--space-6);
+}
+@media (min-width: 900px){
+  .dashboard{
+    grid-template-columns: 2fr 1fr;
+    align-items: start;
   }
-  to {
-    transform: rotate(360deg);
-  }
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
-  }
+/* Kort/sektioner – genbruges på forsiden */
+.section{
+  background: var(--color-surface);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: var(--space-6);
+  border: 1px solid rgba(255,255,255,.06);
 }
 
-.card {
-  padding: 2em;
+.section h2{
+  margin: 0 0 var(--space-4) 0;
+  font-size: 1.1rem;
+  color: var(--color-text);
 }
-
-.read-the-docs {
-  color: #888;
-}
+.section p{ color: var(--color-muted); margin: 0; }

@@ -1,0 +1,10 @@
+/* Header.module.css */
+.brand{ font-weight: 700; letter-spacing: .3px; }
+.nav{ margin-left: auto; display: flex; gap: 16px; }
+.nav a{
+  color: var(--color-muted);
+  text-decoration: none;
+  padding: 6px 10px;
+  border-radius: 8px;
+}
+.nav a:hover{ background: rgba(255,255,255,.06); color: var(--color-text); }

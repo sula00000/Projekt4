@@ -1,0 +1,1 @@
+//5 prikker/stjerner-knapper til at vælge sværhedsgrad (1–5).

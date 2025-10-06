@@ -1,0 +1,1 @@
+//Graf/søjlediagram, som bruges på statistik-siden (viser udvikling/streaks).
