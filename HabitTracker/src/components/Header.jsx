@@ -1,17 +1,20 @@
 // Header.jsx
 import styles from './Header.module.css';
+import { NavLink } from 'react-router-dom';
 
 export default function Header(){
   return (
     <header className={`app-header`}>
       <div className="container">
         <div className={styles.brand}>Habitual Tracker</div>
+
         <nav className={styles.nav}>
-          <a href="/">Forside</a>
-          <a href="/habits">Habits</a>
-          <a href="/routines">Daily</a>
-          <a href="/todos">To-Do</a>
-          <a href="/stats">Statistik</a>
+          <NavLink to="/">Forside</NavLink>
+          <NavLink to="/habits">Habits</NavLink>
+          <NavLink to="/routines">Daily</NavLink>
+          <NavLink to="/todos">To-Do</NavLink>
+          <NavLink to="/stats">Statistik</NavLink>
+          <NavLink to="/profile">Profil</NavLink>
         </nav>
       </div>
     </header>

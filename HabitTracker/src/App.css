@@ -29,11 +29,17 @@
   display: grid;
   gap: var(--space-6);
 }
+
+.stats {
+  grid-column: 1 / -1; /* spænder fra første til sidste kolonne */
+}
+
 @media (min-width: 900px){
   .dashboard{
-    grid-template-columns: 2fr 1fr;
+    grid-template-columns: 1fr 1fr 1fr;
     align-items: start;
   }
+  .stats{ grid-column: 1 / -1; }
 }
 
 /* Kort/sektioner – genbruges på forsiden */
