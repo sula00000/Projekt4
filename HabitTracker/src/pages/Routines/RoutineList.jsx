@@ -1,1 +1,0 @@
-//Viser alle daily/weekly/monthly/annual routines, samt deres status for nuværende periode (done/ikke done).
