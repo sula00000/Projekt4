@@ -12,7 +12,7 @@ hvis man har ældre npm version end 10.9.2 skal den opdateres for en sikker hed 
 
 ----
 
-for at køre appen:
+for at køre appen:.
 - npm run dev
 
 
