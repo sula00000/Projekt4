@@ -1,1 +1,138 @@
-//liste over alle habits med titel, score (+/−) og knap til redigering.
+import React, { useEffect, useState } from "react";
+import HabitEdit, { loadHabits, saveHabits } from "../../Services/HabitEdit";
+
+export default function HabitPage() {
+  const [habits, setHabits] = useState([]);
+  const [editing, setEditing] = useState(null);
+  const [creating, setCreating] = useState(false);
+
+  useEffect(() => {
+    setHabits(loadHabits());
+  }, []);
+
+  function refresh() {
+    setHabits(loadHabits());
+  }
+
+  function ensureValue(item) {
+    return { ...item, value: typeof item.value === "number" ? item.value : 0 };
+  }
+
+  function changeValue(id, delta) {
+    const next = loadHabits().map((h) => {
+      if (h.id !== id) return h;
+      const v = (typeof h.value === "number" ? h.value : 0) + delta;
+      return { ...h, value: Math.max(0, v) };
+    });
+    saveHabits(next);
+    setHabits(next);
+  }
+
+  function handleEditOpen(habit) {
+    setEditing(ensureValue(habit));
+    setCreating(false);
+  }
+
+  function handleCreateOpen() {
+    setCreating(true);
+    setEditing(null);
+  }
+
+  function handleSave() {
+    refresh();
+    setEditing(null);
+    setCreating(false);
+  }
+
+  function handleDelete() {
+    refresh();
+    setEditing(null);
+    setCreating(false);
+  }
+
+  function goToDetail(id) {
+    window.location.href = `/habit/${id}`;
+  }
+
+  return (
+    <div className="habit-page">
+      <header className="habit-header">
+        <h2>Habits</h2>
+        <div className="header-actions">
+          <button className="btn btn-primary" onClick={handleCreateOpen}>
+            Ny habit
+          </button>
+        </div>
+      </header>
+
+      <div className="habit-list">
+        {habits.length === 0 && (
+          <div className="empty">Ingen habits endnu. Opret en ny habit.</div>
+        )}
+
+        {habits.map((h) => {
+          const item = ensureValue(h);
+          return (
+            <div key={item.id} className="habit-row">
+              <div className="habit-info">
+                <div className="habit-title">{item.name}</div>
+                <div className="habit-meta">
+                  Sværhed: {item.difficulty}
+                  {item.description ? " — " + item.description : ""}
+                </div>
+              </div>
+
+              <div className="habit-counter">
+                <button
+                  className="btn"
+                  onClick={() => changeValue(item.id, -1)}
+                  aria-label="decrement"
+                >
+                  −
+                </button>
+                <div className="counter-value">{item.value}</div>
+                <button
+                  className="btn"
+                  onClick={() => changeValue(item.id, +1)}
+                  aria-label="increment"
+                >
+                  +
+                </button>
+              </div>
+
+              <div className="habit-actions">
+                <button className="btn" onClick={() => handleEditOpen(item)}>
+                  Rediger
+                </button>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+
+      <div className="edit-sections">
+        {creating && (
+          <section>
+            <h3>Opret habit</h3>
+            <HabitEdit
+              onSave={handleSave}
+              onCancel={() => setCreating(false)}
+            />
+          </section>
+        )}
+
+        {editing && (
+          <section>
+            <h3>Rediger habit</h3>
+            <HabitEdit
+              habit={editing}
+              onSave={handleSave}
+              onDelete={handleDelete}
+              onCancel={() => setEditing(null)}
+            />
+          </section>
+        )}
+      </div>
+    </div>
+  );
+}
