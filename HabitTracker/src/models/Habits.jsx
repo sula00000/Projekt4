@@ -6,8 +6,8 @@ export default class Habit {
     this.description = description || "";
     const d = Number(difficulty) || 3;
     this.difficulty = Math.min(5, Math.max(1, Math.floor(d)));
-    this.resetCounter = resetCounter || "daily"; // "daily" elleer "weekly" eller  "monthly" de tre valgmukigheder har vi
-    this.value = 0; // score / counter
-    this.createdAt = new Date();
+    this.resetCounter = resetCounter || "daily";
+    this.value = 0;
+    this.createdAt = new Date().toISOString();
   }
 }
