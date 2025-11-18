@@ -1,0 +1,234 @@
+<!doctype html>
+<html lang="da">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Vending Machine Forside</title>
+
+    <!-- Bootswatch Cyborg theme -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootswatch@5.3.2/dist/cyborg/bootstrap.min.css"
+      rel="stylesheet"
+    />
+
+    <style>
+      /* Mørk navy-blå bag Aktuel Lagerstatus */
+      .section-bg {
+        background-color: #0a1f44;
+      }
+
+      /* Hero-sektion */
+      .hero {
+        background-image: url("images/vending.jpg");
+        background-size: cover;
+        background-position: center;
+        color: white;
+      }
+      .hero .overlay {
+        background: rgba(0, 0, 0, 0.5);
+        padding: 60px 0;
+      }
+
+      .card {
+        margin-bottom: 1rem;
+      }
+
+      /* Login-overlay */
+      #loginOverlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.75);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 9999;
+      }
+      #loginOverlay .card {
+        width: 320px;
+      }
+      #loginError {
+        display: none;
+      }
+
+      /* Skjul dashboard indtil login er gennemført */
+      #dashboard {
+        display: none;
+      }
+
+      /* Ensartet baggrund overalt */
+      body {
+        background-color: #0a1f44;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- LOGIN OVERLAY -->
+    <div id="loginOverlay">
+      <div class="card p-4 shadow">
+        <h4 class="card-title mb-3 text-center">Admin Login</h4>
+        <form id="loginForm">
+          <div class="mb-3">
+            <input
+              type="password"
+              id="adminPassword"
+              class="form-control"
+              placeholder="Adgangskode"
+              required
+            />
+          </div>
+          <div id="loginError" class="text-danger mb-3">
+            Forkert adgangskode. Prøv igen.
+          </div>
+          <button type="submit" class="btn btn-primary w-100">Log ind</button>
+        </form>
+      </div>
+    </div>
+
+    <!-- DASHBOARD -->
+    <div id="dashboard">
+      <!-- Navbar -->
+      <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container justify-content-center">
+          <a class="navbar-brand" href="#">Katrinebjergs Vending Machine</a>
+        </div>
+      </nav>
+
+      <!-- Hero Sektion -->
+      <section class="hero">
+        <div class="overlay text-center">
+          <h1 class="display-4">Velkommen til Katrinebjergs Vending Machine</h1>
+          <p class="lead">Overvåg lager og se logs på ét sted.</p>
+          <!-- Her er knappen igen -->
+          <button id="refreshBtn" class="btn btn-outline-light btn-lg m-2">
+            Opdater Data
+          </button>
+        </div>
+      </section>
+
+      <!-- Aktuel Lagerstatus (navy baggrund) -->
+      <section class="container section-bg rounded shadow p-4 mb-5">
+        <h2 class="mb-4 text-center text-white">Aktuel Lagerstatus</h2>
+        <div class="row text-center">
+          <div class="col-md-4">
+            <div class="card shadow">
+              <div class="card-body">
+                <h5 class="card-title">Snickers</h5>
+                <p id="snickersCount" class="display-6 text-primary">–</p>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="card shadow">
+              <div class="card-body">
+                <h5 class="card-title">Maoam</h5>
+                <p id="maoamCount" class="display-6 text-success">–</p>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="card shadow">
+              <div class="card-body">
+                <h5 class="card-title">Coming Soon</h5>
+                <p id="coming_soonCount" class="display-6 text-info">–</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Nyeste Logpost (grå baggrund) -->
+      <section class="container bg-light rounded shadow p-4 mb-5">
+        <h2 class="mb-4 text-center">Nyeste Logpost</h2>
+        <pre
+          id="latestLog"
+          style="white-space: pre-wrap; word-break: break-word"
+        ></pre>
+      </section>
+
+      <!-- Footer -->
+      <footer class="navbar navbar-dark bg-dark">
+        <div class="container justify-content-center">
+          <small
+            >&copy; 2025 Vending Machine af Projektgruppe 1. Alle rettigheder
+            forbeholdes.</small
+          >
+        </div>
+      </footer>
+    </div>
+
+    <script>
+      // ----- LOGIN-FUNKTIONALITET -----
+      document
+        .getElementById("loginForm")
+        .addEventListener("submit", async (e) => {
+          e.preventDefault();
+          const pw = document.getElementById("adminPassword").value;
+          const res = await fetch("/api/login", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ password: pw }),
+          });
+          if (res.ok) {
+            document.getElementById("loginOverlay").style.display = "none";
+            document.getElementById("dashboard").style.display = "block";
+            document.body.style.overflow = "auto";
+            // Hent lager og log ved login
+            fetchStock();
+            fetchLatestLog();
+          } else {
+            document.getElementById("loginError").style.display = "block";
+          }
+        });
+
+      // ----- DATAFREMSKAFFELSE & LOG -----
+      const API_STOCK = "/api/stock";
+      const API_LATEST_LOG = "/api/logs/latest";
+
+      async function fetchStock() {
+        try {
+          const res = await fetch(API_STOCK);
+          if (!res.ok) throw new Error(`HTTP ${res.status}`);
+          const data = await res.json();
+          document.getElementById("snickersCount").textContent =
+            data.snickers ?? 0;
+          document.getElementById("maoamCount").textContent = data.maoam ?? 0;
+          document.getElementById("coming_soonCount").textContent =
+            data.coming_soon ?? 0;
+        } catch (err) {
+          console.error("Fejl ved hentning af lager:", err);
+        }
+      }
+
+      async function fetchLatestLog() {
+        try {
+          const res = await fetch(API_LATEST_LOG);
+          if (!res.ok) throw new Error("Ingen logs fundet");
+          const log = await res.json();
+          document.getElementById("latestLog").textContent = JSON.stringify(
+            log,
+            null,
+            2
+          );
+        } catch (err) {
+          document.getElementById("latestLog").textContent =
+            "Fejl ved hentning af log: " + err.message;
+        }
+      }
+
+      // ----- KNAP-EVENT & AUTO-OPDATERING -----
+      document.getElementById("refreshBtn").addEventListener("click", () => {
+        fetchStock();
+        fetchLatestLog();
+      });
+
+      // Første indlæsning + polling
+      fetchStock();
+      fetchLatestLog();
+      setInterval(fetchStock, 60000);
+      setInterval(fetchLatestLog, 60000);
+    </script>
+  </body>
+</html>
