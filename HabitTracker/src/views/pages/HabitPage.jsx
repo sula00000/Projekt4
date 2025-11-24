@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import HabitEdit, { loadHabits, saveHabits } from "../../Services/HabitEdit";
+import { recordCheckin } from "../../models/Stats";
 
 export default function HabitPage() {
   const [habits, setHabits] = useState([]);
@@ -26,6 +27,10 @@ export default function HabitPage() {
     });
     saveHabits(next);
     setHabits(next);
+
+    if (delta !== 0) {
+      recordCheckin(id, delta, { clampDaily: true });
+    }
   }
 
   function handleEditOpen(habit) {
@@ -88,7 +93,7 @@ export default function HabitPage() {
                   onClick={() => changeValue(item.id, -1)}
                   aria-label="decrement"
                 >
-                  −
+                  -
                 </button>
                 <div className="counter-value">{item.value}</div>
                 <button

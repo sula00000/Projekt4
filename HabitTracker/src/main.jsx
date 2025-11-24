@@ -6,6 +6,7 @@ import "./index.css";
 import App from "./App.jsx";
 import HabitPage from "./views/pages/HabitPage.jsx";
 import DashboardPage from "./views/pages/DashboardPage.jsx"; // vis forsiden som før
+import StatisticsPage from "./views/pages/StatisticsPage.jsx";
 
 createRoot(document.getElementById("root")).render(
   <React.StrictMode>
@@ -15,8 +16,7 @@ createRoot(document.getElementById("root")).render(
           {/* index route viser forsiden (Dashboard) */}
           <Route index element={<DashboardPage />} />
           <Route path="habits" element={<HabitPage />} />
-          {/* detaljerute hvis du vil: */}
-          {/* <Route path="habit/:id" element={<HabitDetail />} /> */}
+          <Route path="stats" element={<StatisticsPage />} />
         </Route>
       </Routes>
     </BrowserRouter>
