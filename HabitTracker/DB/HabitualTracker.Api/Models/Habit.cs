@@ -1,28 +1,29 @@
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 
+namespace HabitualTracker.Api.Models;
 
-namespace HabitualTracker.Api.models
+public class Habit
 {
-    public class Habit
-    {
-        [BsonId]
-        [BsonRepresentation(BsonType.ObjectId)]
-        public string Id { get; set; } = null!;
+    [BsonId]
+    [BsonRepresentation(BsonType.ObjectId)]
+    public string Id { get; set; } = null!;
 
-        [BsonElement("name")]
-        public string Name { get; set; } = null!;
+    [BsonElement("name")]
+    public string Name { get; set; } = null!;
 
-        [BsonElement("description")]
-        public string Description { get; set; } = null!;
+    [BsonElement("description")]
+    public string Description { get; set; } = "";
 
-        [BsonElement("difficulty")]
-        public string Difficulty { get; set; } = null!;
+    [BsonElement("difficulty")]
+    public int Difficulty { get; set; } = 3;
 
-        [BsonElement("createdAt")]
-        public DateTime CreatedAt { get; set; }
+    [BsonElement("resetCounter")]
+    public string ResetCounter { get; set; } = "daily";
 
-        [BsonElement("isCompleted")]
-        public bool IsCompleted { get; set; }
-    }
+    [BsonElement("value")]
+    public int Value { get; set; } = 0;
+
+    [BsonElement("createdAt")]
+    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 }
