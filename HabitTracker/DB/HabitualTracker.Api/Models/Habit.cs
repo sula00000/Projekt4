@@ -9,6 +9,9 @@ public class Habit
     [BsonRepresentation(BsonType.ObjectId)]
     public string? Id { get; set; }    // ingen default-værdi, ingen "string
 
+    [BsonElement("ownerId")]
+    public string OwnerId { get; set; } = null!;   // ← NYT
+
     [BsonElement("name")]
     public string Name { get; set; } = null!;
 

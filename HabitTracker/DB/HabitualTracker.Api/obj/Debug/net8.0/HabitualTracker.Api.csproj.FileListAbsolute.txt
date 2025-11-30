@@ -9,6 +9,13 @@ C:\Users\User\Documents\projekt4\Projekt4\HabitTracker\DB\HabitualTracker.Api\bi
 C:\Users\User\Documents\projekt4\Projekt4\HabitTracker\DB\HabitualTracker.Api\bin\Debug\net8.0\AWSSDK.Core.dll
 C:\Users\User\Documents\projekt4\Projekt4\HabitTracker\DB\HabitualTracker.Api\bin\Debug\net8.0\AWSSDK.SecurityToken.dll
 C:\Users\User\Documents\projekt4\Projekt4\HabitTracker\DB\HabitualTracker.Api\bin\Debug\net8.0\DnsClient.dll
+C:\Users\User\Documents\projekt4\Projekt4\HabitTracker\DB\HabitualTracker.Api\bin\Debug\net8.0\Microsoft.AspNetCore.Authentication.JwtBearer.dll
+C:\Users\User\Documents\projekt4\Projekt4\HabitTracker\DB\HabitualTracker.Api\bin\Debug\net8.0\Microsoft.IdentityModel.Abstractions.dll
+C:\Users\User\Documents\projekt4\Projekt4\HabitTracker\DB\HabitualTracker.Api\bin\Debug\net8.0\Microsoft.IdentityModel.JsonWebTokens.dll
+C:\Users\User\Documents\projekt4\Projekt4\HabitTracker\DB\HabitualTracker.Api\bin\Debug\net8.0\Microsoft.IdentityModel.Logging.dll
+C:\Users\User\Documents\projekt4\Projekt4\HabitTracker\DB\HabitualTracker.Api\bin\Debug\net8.0\Microsoft.IdentityModel.Protocols.dll
+C:\Users\User\Documents\projekt4\Projekt4\HabitTracker\DB\HabitualTracker.Api\bin\Debug\net8.0\Microsoft.IdentityModel.Protocols.OpenIdConnect.dll
+C:\Users\User\Documents\projekt4\Projekt4\HabitTracker\DB\HabitualTracker.Api\bin\Debug\net8.0\Microsoft.IdentityModel.Tokens.dll
 C:\Users\User\Documents\projekt4\Projekt4\HabitTracker\DB\HabitualTracker.Api\bin\Debug\net8.0\Microsoft.OpenApi.dll
 C:\Users\User\Documents\projekt4\Projekt4\HabitTracker\DB\HabitualTracker.Api\bin\Debug\net8.0\MongoDB.Bson.dll
 C:\Users\User\Documents\projekt4\Projekt4\HabitTracker\DB\HabitualTracker.Api\bin\Debug\net8.0\MongoDB.Driver.dll
@@ -19,6 +26,7 @@ C:\Users\User\Documents\projekt4\Projekt4\HabitTracker\DB\HabitualTracker.Api\bi
 C:\Users\User\Documents\projekt4\Projekt4\HabitTracker\DB\HabitualTracker.Api\bin\Debug\net8.0\Swashbuckle.AspNetCore.Swagger.dll
 C:\Users\User\Documents\projekt4\Projekt4\HabitTracker\DB\HabitualTracker.Api\bin\Debug\net8.0\Swashbuckle.AspNetCore.SwaggerGen.dll
 C:\Users\User\Documents\projekt4\Projekt4\HabitTracker\DB\HabitualTracker.Api\bin\Debug\net8.0\Swashbuckle.AspNetCore.SwaggerUI.dll
+C:\Users\User\Documents\projekt4\Projekt4\HabitTracker\DB\HabitualTracker.Api\bin\Debug\net8.0\System.IdentityModel.Tokens.Jwt.dll
 C:\Users\User\Documents\projekt4\Projekt4\HabitTracker\DB\HabitualTracker.Api\bin\Debug\net8.0\ZstdSharp.dll
 C:\Users\User\Documents\projekt4\Projekt4\HabitTracker\DB\HabitualTracker.Api\bin\Debug\net8.0\runtimes\linux\native\libmongocrypt.so
 C:\Users\User\Documents\projekt4\Projekt4\HabitTracker\DB\HabitualTracker.Api\bin\Debug\net8.0\runtimes\osx\native\libmongocrypt.dylib

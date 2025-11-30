@@ -12,6 +12,6 @@ public class Login
     [BsonElement("email")]
     public string Email { get; set; } = null!;
 
-    [BsonElement("passwordHash")]
-    public string PasswordHash { get; set; } = null!;
+    [BsonElement("password")]
+    public string Password { get; set; } = null!;
 }

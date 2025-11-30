@@ -21,6 +21,9 @@ public class HabitService
 
     public async Task<Habit?> GetByIdAsync(string id) =>
         await _habits.Find(h => h.Id == id).FirstOrDefaultAsync();
+    public async Task<List<Habit>> GetByOwnerAsync(string ownerId) =>
+        await _habits.Find(h => h.OwnerId == ownerId).ToListAsync();
+
 
     public async Task<Habit> CreateAsync(Habit habit)
     {
