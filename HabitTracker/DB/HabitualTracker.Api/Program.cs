@@ -17,7 +17,7 @@ builder.Services.AddSingleton<LoginService>();
 
 builder.Services.AddControllers();
 
-//  CORS (så React kan kalde din API)
+//  CORS 
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAll", policy =>

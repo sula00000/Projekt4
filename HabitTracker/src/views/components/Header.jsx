@@ -15,6 +15,7 @@ export default function Header() {
           <NavLink to="/todos">To-Do</NavLink>
           <NavLink to="/stats">Statistik</NavLink>
           <NavLink to="/profile">Profil</NavLink>
+          <NavLink to="/login">Login</NavLink>
         </nav>
       </div>
     </header>
