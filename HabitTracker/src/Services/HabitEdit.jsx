@@ -1,6 +1,8 @@
 // Formular til at oprette/redigere/slette en habit (titel, noter, difficulty).
 import React, { useState, useEffect } from "react";
 import Habit from "../models/Habits";
+import DifficultyPicker from "../views/components/DifficultyPicker";
+import RepeatPicker from "../views/components/RepeatPicker";
 
 const STORAGE_KEY = "projekt4_habits_v1";
 
@@ -27,6 +29,9 @@ export function loadHabits() {
 export function saveHabits(habits) {
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(habits));
+    // broadcast for andre tabs + same tab
+    localStorage.setItem("projekt4_last_update", new Date().toISOString());
+    window.dispatchEvent(new Event("checkins-change"));
   } catch {}
 }
 
@@ -168,27 +173,19 @@ export default function HabitEdit({
       </div>
 
       <div className="field">
-        <label>Sværhedsgrad (1–5)</label>
-        <select name="difficulty" value={form.difficulty} onChange={onChange}>
-          <option value={1}>1</option>
-          <option value={2}>2</option>
-          <option value={3}>3</option>
-          <option value={4}>4</option>
-          <option value={5}>5</option>
-        </select>
+        <label>Sværhedsgrad</label>
+        <DifficultyPicker
+          value={form.difficulty}
+          onChange={(d) => setForm((f) => ({ ...f, difficulty: d }))}
+        />
       </div>
 
       <div className="field">
         <label>Reset</label>
-        <select
-          name="resetCounter"
+        <RepeatPicker
           value={form.resetCounter}
-          onChange={onChange}
-        >
-          <option value="daily">Dagligt</option>
-          <option value="weekly">Ugentligt</option>
-          <option value="monthly">Månedligt</option>
-        </select>
+          onChange={(r) => setForm((f) => ({ ...f, resetCounter: r }))}
+        />
       </div>
 
       {error && <div className="error">{error}</div>}
