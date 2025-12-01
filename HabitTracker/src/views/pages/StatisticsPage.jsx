@@ -10,11 +10,25 @@ export default function StatisticsPage() {
   const [tick, setTick] = useState(0);
 
   useEffect(() => {
-    setHabits(loadHabits());
-    function onChange() {
-      setHabits(loadHabits());
+    async function fetchHabits() {
+      const token = localStorage.getItem("token");
+      if (!token) return;
+      
+      const data = await loadHabits();
+      setHabits(data);
+    }
+    
+    fetchHabits();
+    
+    async function onChange() {
+      const token = localStorage.getItem("token");
+      if (!token) return;
+      
+      const data = await loadHabits();
+      setHabits(data);
       setTick((t) => t + 1);
     }
+    
     window.addEventListener("storage", onChange);
     window.addEventListener("checkins-change", onChange);
     return () => {

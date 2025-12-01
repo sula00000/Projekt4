@@ -1,6 +1,6 @@
 /* Header.module.css */
 .brand{ font-weight: 700; letter-spacing: .3px; }
-.nav{ margin-left: auto; display: flex; gap: 16px; }
+.nav{ margin-left: auto; display: flex; gap: 16px; align-items: center; }
 .nav a{
   color: var(--color-muted);
   text-decoration: none;
@@ -8,3 +8,22 @@
   border-radius: 8px;
 }
 .nav a:hover{ background: rgba(255,255,255,.06); color: var(--color-text); }
+
+/* Logout knap */
+.logoutBtn {
+  background: rgba(239, 68, 68, 0.1);
+  color: #ff6b6b;
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  padding: 6px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.logoutBtn:hover {
+  background: rgba(239, 68, 68, 0.2);
+  border-color: rgba(239, 68, 68, 0.5);
+  color: #ff8787;
+}

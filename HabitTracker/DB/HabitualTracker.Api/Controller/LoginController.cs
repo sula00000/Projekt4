@@ -39,7 +39,7 @@ public class LoginController : ControllerBase
 
         await _loginService.CreateAsync(login);
 
-        return Ok("Bruger oprettet.");
+        return Ok(new { message = "Bruger oprettet." });
     }
 
     // POST /api/login/login

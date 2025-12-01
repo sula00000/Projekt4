@@ -1,32 +1,47 @@
 import React, { useEffect, useState } from "react";
-import HabitEdit, { loadHabits, saveHabits } from "../../Services/HabitEdit";
+import HabitEdit, { loadHabits, saveHabits, updateHabit } from "../../Services/HabitEdit";
 import { recordCheckin } from "../../models/Stats";
 
 export default function HabitPage() {
   const [habits, setHabits] = useState([]);
   const [editing, setEditing] = useState(null);
   const [creating, setCreating] = useState(false);
+  const [loading, setLoading] = useState(true); 
 
+  // Hent habits ved komponentindlæsning
   useEffect(() => {
-    setHabits(loadHabits());
+    async function fetchHabits() {
+      try {
+        const data = await loadHabits(); // venter på API respons
+        setHabits(data);
+      } catch (error) {
+        console.error("Failed to load habits:", error);
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchHabits();
   }, []);
 
-  function refresh() {
-    setHabits(loadHabits());
+  async function refresh() {
+    const data = await loadHabits(); // Hent fra API
+    setHabits(data);
   }
 
   function ensureValue(item) {
     return { ...item, value: typeof item.value === "number" ? item.value : 0 };
   }
 
-  function changeValue(id, delta) {
-    const next = loadHabits().map((h) => {
-      if (h.id !== id) return h;
-      const v = (typeof h.value === "number" ? h.value : 0) + delta;
-      return { ...h, value: Math.max(0, v) };
-    });
-    saveHabits(next);
-    setHabits(next);
+  async function changeValue(id, delta) {
+    const currentHabits = await loadHabits();
+    const habit = currentHabits.find(h => h.id === id);
+    if (!habit) return;
+
+    const v = (typeof habit.value === "number" ? habit.value : 0) + delta;
+    const newValue = Math.max(0, v);
+
+    await updateHabit(id, { ...habit, value: newValue });
+    await refresh();
 
     if (delta !== 0) {
       recordCheckin(id, delta, { clampDaily: true });

@@ -8,14 +8,28 @@ import Card from "../components/Card";
 
 export default function DashboardPage() {
   const [habits, setHabits] = useState([]);
-  const [tick, setTick] = useState(0);
 
   useEffect(() => {
-    setHabits(loadHabits());
+    async function fetchHabits() {
+      // Tjek om vi har en token først
+      const token = localStorage.getItem("token");
+      if (!token) {
+        console.log("No token found, skipping loadHabits");
+        return;
+      }
+      
+      const data = await loadHabits();
+      setHabits(data);
+    }
+    
+    fetchHabits();
 
-    function onChange() {
-      setHabits(loadHabits());
-      setTick((t) => t + 1);
+    async function onChange() {
+      const token = localStorage.getItem("token");
+      if (!token) return;
+      
+      const data = await loadHabits();
+      setHabits(data);
     }
 
     window.addEventListener("storage", onChange);
@@ -25,7 +39,7 @@ export default function DashboardPage() {
       window.removeEventListener("storage", onChange);
       window.removeEventListener("checkins-change", onChange);
     };
-  }, [tick]);
+  }, []); // Kun kør ved mount
 
   const active = habits.length;
   const preview = habits.slice(0, 3);
