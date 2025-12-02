@@ -39,12 +39,9 @@ export default function LoginPage() {
       }
 
       localStorage.setItem("token", res.token);
+      console.log("Token saved to localStorage:", res.token.substring(0, 20) + "...");
       setSuccess("Login succesfuld! Omdirigerer...");
-      
-      // Lille delay før redirect for at vise success message
-      setTimeout(() => {
-        navigate("/");
-      }, 800);
+      navigate("/");
     } catch (err) {
       console.error(err);
       setError("Noget gik galt ved login.");

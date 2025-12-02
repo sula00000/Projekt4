@@ -13,7 +13,7 @@ export default function DashboardPage() {
     async function fetchHabits() {
       // Tjek om vi har en token først
       const token = localStorage.getItem("token");
-      if (!token) {
+      if (token == false || token == null) { // if token is missing or false then skip
         console.log("No token found, skipping loadHabits");
         return;
       }

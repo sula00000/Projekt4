@@ -1,8 +1,12 @@
+using System.IdentityModel.Tokens.Jwt;
 using System.Text;
 using HabitualTracker.Api.Models;
 using HabitualTracker.Api.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
+
+// Prevent automatic claim type mapping (keeps "sub" as "sub")
+JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -63,25 +67,46 @@ builder.Services.AddSwaggerGen(options =>
 var jwtSection = builder.Configuration.GetSection("Jwt");
 var key = Encoding.UTF8.GetBytes(jwtSection["Key"] ?? "fallback_dev_key");
 
-builder.Services.AddAuthentication(options =>
-{
-    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-})
-.AddJwtBearer(options =>
-{
-    options.RequireHttpsMetadata = false; // dev only
-    options.SaveToken = true;
-    options.TokenValidationParameters = new TokenValidationParameters
+builder.Services
+    .AddAuthentication(options =>
     {
-        ValidateIssuer = true,
-        ValidateAudience = true,
-        ValidateIssuerSigningKey = true,
-        ValidIssuer = jwtSection["Issuer"],
-        ValidAudience = jwtSection["Audience"],
-        IssuerSigningKey = new SymmetricSecurityKey(key)
-    };
-});
+        options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+        options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+    })
+    .AddJwtBearer(options =>
+    {
+        options.RequireHttpsMetadata = false; // dev only
+        options.SaveToken = true;
+
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateIssuerSigningKey = true,
+            // midlertidigt: slå lifetime-check FRA for at se om det er tiden der driller
+            ValidateLifetime = false,  
+
+            ValidIssuer = jwtSection["Issuer"],
+            ValidAudience = jwtSection["Audience"],
+            IssuerSigningKey = new SymmetricSecurityKey(key)
+        };
+
+        options.Events = new JwtBearerEvents
+        {
+            OnAuthenticationFailed = context =>
+            {
+                Console.WriteLine("JWT AUTH FAILED:");
+                Console.WriteLine(context.Exception.ToString());
+                return Task.CompletedTask;
+            },
+            OnTokenValidated = context =>
+            {
+                var sub = context.Principal?.FindFirst("sub")?.Value;
+                Console.WriteLine($"JWT AUTH OK – sub = {sub}");
+                return Task.CompletedTask;
+            }
+        };
+    });
 
 //  App Pipeline
 var app = builder.Build();
@@ -92,10 +117,12 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseHttpsRedirection();
-
-// 
+// CORS must be before Authentication
 app.UseCors("AllowAll");
+
+// Disable HTTPS redirection in development
+// app.UseHttpsRedirection();
+
 app.UseAuthentication();
 app.UseAuthorization();
 
