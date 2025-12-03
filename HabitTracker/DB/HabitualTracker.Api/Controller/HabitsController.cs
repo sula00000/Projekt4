@@ -1,4 +1,5 @@
 using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 using HabitualTracker.Api.Models;
 using HabitualTracker.Api.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -20,8 +21,24 @@ public class HabitsController : ControllerBase
 
     private string? GetUserId()
     {
-        // vi lagde brugerens Id i "sub" claim i JWT
-        return User.FindFirst(JwtRegisteredClaimNames.Sub)?.Value;
+        // Debug: print all claims
+        Console.WriteLine("=== ALL CLAIMS ===");
+        foreach (var claim in User.Claims)
+        {
+            Console.WriteLine($"  Type: '{claim.Type}', Value: '{claim.Value}'");
+        }
+        Console.WriteLine("==================");
+        
+        // Try multiple ways to get the sub claim
+        var userId1 = User.FindFirst(JwtRegisteredClaimNames.Sub)?.Value;
+        var userId2 = User.FindFirst("sub")?.Value;
+        var userId3 = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        
+        Console.WriteLine($"JwtRegisteredClaimNames.Sub: '{userId1}'");
+        Console.WriteLine($"Direct 'sub': '{userId2}'");
+        Console.WriteLine($"ClaimTypes.NameIdentifier: '{userId3}'");
+        
+        return userId1 ?? userId2 ?? userId3;
     }
 
     // GET /api/habits (kun dine egne)

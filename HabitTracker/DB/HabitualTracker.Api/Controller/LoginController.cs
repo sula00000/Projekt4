@@ -52,21 +52,31 @@ public class LoginController : ControllerBase
             return Unauthorized("Forkert email eller password.");
         }
 
-        var token = GenerateJwt(login);
+        Console.WriteLine($"Login successful - User ID: {login.Id}, Email: {login.Email}");
+        
+        var token = GenerateJwt(login); 
         return Ok(new { token });
     }
 
     private string GenerateJwt(Login login)
     {
+        if (string.IsNullOrEmpty(login.Id))
+        {
+            throw new InvalidOperationException("Cannot generate JWT: User ID is null or empty");
+        }
+
         var jwtSection = _configuration.GetSection("Jwt");
-        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSection["Key"]!));
+        var keyString = jwtSection["Key"] ?? throw new InvalidOperationException("JWT Key is not configured");
+        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(keyString));
         var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
         var claims = new[]
         {
-            new Claim(JwtRegisteredClaimNames.Sub, login.Id ?? ""),
+            new Claim(JwtRegisteredClaimNames.Sub, login.Id),
             new Claim(JwtRegisteredClaimNames.Email, login.Email)
         };
+        
+        Console.WriteLine($"Generating JWT with sub={login.Id}");
 
         var token = new JwtSecurityToken(
             issuer: jwtSection["Issuer"],
