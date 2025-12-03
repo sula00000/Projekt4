@@ -1,6 +1,5 @@
 // Formular til at oprette/redigere/slette en habit (titel, noter, difficulty).
 import React, { useState, useEffect } from "react";
-import Habit from "../models/Habits";
 import DifficultyPicker from "../views/components/DifficultyPicker";
 import RepeatPicker from "../views/components/RepeatPicker";
 import { apiGet, apiPost, apiPut, apiDelete } from "../utils/apiClient"; // getting api calls from apiClient.js (DB)

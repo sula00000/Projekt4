@@ -1,9 +1,9 @@
-const API_URL = "http://localhost:5158";
+const API_URL = "http://localhost:8080";
 
-export async function apiGet(endpoint) {
+export async function apiGet(endpoint) { 
   const token = localStorage.getItem("token");
   
-  console.log("API GET Request:", {
+  console.log("API GET Request:", { 
     endpoint,
     hasToken: !!token,
     tokenPreview: token ? token.substring(0, 20) + "..." : "none"
