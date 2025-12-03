@@ -1,8 +1,8 @@
 // Formular til at oprette/redigere/slette en habit (titel, noter, difficulty).
 import React, { useState, useEffect } from "react";
-import Habit from "../models/Habits";
 import DifficultyPicker from "../views/components/DifficultyPicker";
 import RepeatPicker from "../views/components/RepeatPicker";
+import { apiGet, apiPost, apiPut, apiDelete } from "../utils/apiClient"; // getting api calls from apiClient.js (DB)
 
 const STORAGE_KEY = "projekt4_habits_v1";
 
@@ -17,15 +17,32 @@ function clampDifficulty(v) {
   return Math.min(5, Math.max(1, n));
 }
 
-export function loadHabits() {
+// Hent alle habits fra API (tidligere localStorage)
+export async function loadHabits() {
   try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    return raw ? JSON.parse(raw) : [];
-  } catch {
-    return [];
+    // Hent fra API
+    const data = await apiGet("/api/habits");
+    // Tjek om data er et array
+    if (!Array.isArray(data)) {
+      console.warn("API returned non-array data:", data);
+      return [];
+    }
+    // Gem også i localStorage som fallback
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+    return data;
+  } catch (error) {
+    console.error("Failed to load habits from API:", error);
+    // Fallback til localStorage
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      return raw ? JSON.parse(raw) : [];
+    } catch {
+      return [];
+    }
   }
 }
 
+// hjælpe funktion til at gemme habits i localStorage
 export function saveHabits(habits) {
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(habits));
@@ -35,48 +52,72 @@ export function saveHabits(habits) {
   } catch {}
 }
 
-export function createHabit({
+// Opret ny habit via API og opdater localStorage
+export async function createHabit({
   name,
   description = "",
   difficulty = 3,
   resetCounter = "daily",
 }) {
-  const id = genId();
-  const h = new Habit(
-    id,
-    String(name).trim(),
-    String(description).trim(),
-    clampDifficulty(difficulty),
-    resetCounter
-  );
-  const list = loadHabits();
-  list.unshift(h);
-  saveHabits(list);
-  return h;
+  try {
+    // Send til API
+    const habit = await apiPost("/api/habits", {
+      name: String(name).trim(),
+      description: String(description).trim(),
+      difficulty: clampDifficulty(difficulty),
+      resetCounter: resetCounter,
+      value: 0
+    });
+    
+    // Opdater localStorage
+    const list = await loadHabits();
+    window.dispatchEvent(new Event("checkins-change"));
+    
+    return habit;
+  } catch (error) {
+    console.error("Failed to create habit:", error);
+    throw error;
+  }
 }
 
-export function updateHabit(id, updates = {}) {
-  const next = loadHabits().map((item) => {
-    if (item.id !== id) return item;
-    const merged = {
-      ...item,
-      ...updates,
-      difficulty:
-        updates.difficulty !== undefined
-          ? clampDifficulty(updates.difficulty)
-          : item.difficulty,
-      createdAt: item.createdAt || merged?.createdAt,
-    };
-    return merged;
-  });
-  saveHabits(next);
-  return next.find((it) => it.id === id) || null;
+// Opdater eksisterende habit via API og opdater localStorage
+export async function updateHabit(id, updates = {}) {
+  try {
+    // Send til API med PUT
+    await apiPut(`/api/habits/${id}`, {
+      name: updates.name,
+      description: updates.description || "",
+      difficulty: updates.difficulty !== undefined ? clampDifficulty(updates.difficulty) : 3,
+      resetCounter: updates.resetCounter || "daily",
+      value: updates.value || 0
+    });
+    
+    // Hent opdateret liste
+    const habits = await loadHabits();
+    window.dispatchEvent(new Event("checkins-change"));
+    
+    return habits.find((it) => it.id === id) || null;
+  } catch (error) {
+    console.error("Failed to update habit:", error);
+    throw error;
+  }
 }
 
-export function deleteHabit(id) {
-  const next = loadHabits().filter((item) => item.id !== id);
-  saveHabits(next);
-  return next;
+// Slet habit via API og opdater localStorage
+export async function deleteHabit(id) {
+  try {
+    // Slet via API
+    await apiDelete(`/api/habits/${id}`);
+    
+    // Hent opdateret liste
+    const habits = await loadHabits();
+    window.dispatchEvent(new Event("checkins-change"));
+    
+    return habits;
+  } catch (error) {
+    console.error("Failed to delete habit:", error);
+    throw error;
+  }
 }
 
 export default function HabitEdit({
@@ -119,41 +160,52 @@ export default function HabitEdit({
     }));
   }
 
-  function handleSubmit(e) {
+  async function handleSubmit(e) {
     e.preventDefault();
     if (!form.name.trim()) return setError("Navn skal udfyldes.");
     setError("");
 
-    if (habit?.id) {
-      const updated = updateHabit(habit.id, {
-        name: form.name.trim(),
-        description: form.description.trim(),
-        difficulty: form.difficulty,
-        resetCounter: form.resetCounter,
-      });
-      onSave?.(updated);
-    } else {
-      const created = createHabit({
-        name: form.name.trim(),
-        description: form.description.trim(),
-        difficulty: form.difficulty,
-        resetCounter: form.resetCounter,
-      });
-      onSave?.(created);
-      setForm({
-        name: "",
-        description: "",
-        difficulty: 3,
-        resetCounter: "daily",
-      });
+    try {
+      if (habit?.id) {
+        const updated = await updateHabit(habit.id, {
+          name: form.name.trim(),
+          description: form.description.trim(),
+          difficulty: form.difficulty,
+          resetCounter: form.resetCounter,
+        });
+        onSave?.(updated);
+      } else {
+        const created = await createHabit({
+          name: form.name.trim(),
+          description: form.description.trim(),
+          difficulty: form.difficulty,
+          resetCounter: form.resetCounter,
+        });
+        onSave?.(created);
+        setForm({
+          name: "",
+          description: "",
+          difficulty: 3,
+          resetCounter: "daily",
+        });
+      }
+    } catch (error) {
+      console.error("Failed to save habit:", error);
+      setError("Kunne ikke gemme habit. Er du logget ind?");
     }
   }
 
-  function handleDelete() {
+  async function handleDelete() {
     if (!habit?.id) return;
     if (!window.confirm(`Vil du slette habit "${habit.name}"?`)) return;
-    deleteHabit(habit.id);
-    onDelete?.(habit.id);
+    
+    try {
+      await deleteHabit(habit.id);
+      onDelete?.(habit.id);
+    } catch (error) {
+      console.error("Failed to delete habit:", error);
+      setError("Kunne ikke slette habit.");
+    }
   }
 
   return (

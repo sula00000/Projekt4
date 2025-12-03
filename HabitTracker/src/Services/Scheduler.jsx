@@ -4,13 +4,20 @@ import { loadHabits, saveHabits } from "./HabitEdit";
 
 const LAST_RESET_KEY = "projekt4_last_reset";
 
-export function checkAndResetHabits() {
+export async function checkAndResetHabits() {
   const now = new Date();
   const lastReset = localStorage.getItem(LAST_RESET_KEY);
 
   if (!needsReset(lastReset)) return;
 
-  const habits = loadHabits();
+  const habits = await loadHabits();
+  
+  // Ensure habits is an array
+  if (!Array.isArray(habits)) {
+    console.warn("loadHabits did not return an array, skipping reset");
+    return;
+  }
+  
   const updated = habits.map((habit) => {
     if (shouldResetHabit(habit, lastReset)) {
       return { ...habit, value: 0 };
