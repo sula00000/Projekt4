@@ -6,7 +6,7 @@ import { apiGet, apiPost, apiPut, apiDelete } from "../utils/apiClient"; // gett
 
 //const STORAGE_KEY = "projekt4_habits_v1"; // tidligere brugt til localStorage
 
-function clampDifficulty(v) {
+function clampDifficulty(v) { // Sørg for at sværhedsgraden er mellem 1 og 5
   const n = Math.floor(Number(v) || 3);
   return Math.min(5, Math.max(1, n));
 }
@@ -17,10 +17,6 @@ export async function loadHabits() {
     // Hent fra API
     const data = await apiGet("/api/habits");
     // Tjek om data er et array
-    if (!Array.isArray(data)) {
-      console.warn("API returned non-array data:", data);
-      return [];
-    }
     return data;
   } catch (error) {
     console.error("Failed to load habits from API:", error);
@@ -45,7 +41,7 @@ export async function createHabit({
       value: 0
     });
     // Hent opdateret liste
-    const list = await loadHabits();
+    //const list = await loadHabits();
     
     return habit;
   } catch (error) {
