@@ -1,6 +1,6 @@
 //Holder styr på reset-tider (kl. 00:00 søndag → mandag) og starter ny periode for routines.
 
-import { loadHabits, saveHabits } from "./HabitEdit";
+import { loadHabits, updateHabit } from "./HabitEdit";
 
 const LAST_RESET_KEY = "projekt4_last_reset";
 
@@ -11,23 +11,25 @@ export async function checkAndResetHabits() {
   if (!needsReset(lastReset)) return;
 
   const habits = await loadHabits();
-  
+
   // Ensure habits is an array
   if (!Array.isArray(habits)) {
     console.warn("loadHabits did not return an array, skipping reset");
     return;
   }
-  
-  const updated = habits.map((habit) => {
-    if (shouldResetHabit(habit, lastReset)) {
-      return { ...habit, value: 0 };
-    }
-    return habit;
-  });
 
-  saveHabits(updated);
+  // talks to backend to reset habits
+  for (const habit of habits) {
+    if (shouldResetHabit(habit, lastReset)) {
+      try {
+        await updateHabit(habit.id, { ...habit, value: 0 });
+      } catch (error) {
+        console.error("Failed to reset habit:", error);
+      }
+    }
+  }
+
   localStorage.setItem(LAST_RESET_KEY, now.toISOString());
-  window.dispatchEvent(new Event("checkins-change"));
 }
 
 function needsReset(lastReset) {

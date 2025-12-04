@@ -4,20 +4,14 @@ import DifficultyPicker from "../views/components/DifficultyPicker";
 import RepeatPicker from "../views/components/RepeatPicker";
 import { apiGet, apiPost, apiPut, apiDelete } from "../utils/apiClient"; // getting api calls from apiClient.js (DB)
 
-const STORAGE_KEY = "projekt4_habits_v1";
-
-function genId() {
-  if (typeof crypto !== "undefined" && crypto.randomUUID)
-    return crypto.randomUUID();
-  return Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
-}
+//const STORAGE_KEY = "projekt4_habits_v1"; // tidligere brugt til localStorage
 
 function clampDifficulty(v) {
   const n = Math.floor(Number(v) || 3);
   return Math.min(5, Math.max(1, n));
 }
 
-// Hent alle habits fra API (tidligere localStorage)
+// Hent alle habits fra API
 export async function loadHabits() {
   try {
     // Hent fra API
@@ -27,29 +21,11 @@ export async function loadHabits() {
       console.warn("API returned non-array data:", data);
       return [];
     }
-    // Gem også i localStorage som fallback
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
     return data;
   } catch (error) {
     console.error("Failed to load habits from API:", error);
-    // Fallback til localStorage
-    try {
-      const raw = localStorage.getItem(STORAGE_KEY);
-      return raw ? JSON.parse(raw) : [];
-    } catch {
-      return [];
-    }
+    return [];
   }
-}
-
-// hjælpe funktion til at gemme habits i localStorage
-export function saveHabits(habits) {
-  try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(habits));
-    // broadcast for andre tabs + same tab
-    localStorage.setItem("projekt4_last_update", new Date().toISOString());
-    window.dispatchEvent(new Event("checkins-change"));
-  } catch {}
 }
 
 // Opret ny habit via API og opdater localStorage
@@ -68,10 +44,8 @@ export async function createHabit({
       resetCounter: resetCounter,
       value: 0
     });
-    
-    // Opdater localStorage
+    // Hent opdateret liste
     const list = await loadHabits();
-    window.dispatchEvent(new Event("checkins-change"));
     
     return habit;
   } catch (error) {
@@ -80,7 +54,7 @@ export async function createHabit({
   }
 }
 
-// Opdater eksisterende habit via API og opdater localStorage
+// Opdater eksisterende habit via API og opdater
 export async function updateHabit(id, updates = {}) {
   try {
     // Send til API med PUT
@@ -89,12 +63,11 @@ export async function updateHabit(id, updates = {}) {
       description: updates.description || "",
       difficulty: updates.difficulty !== undefined ? clampDifficulty(updates.difficulty) : 3,
       resetCounter: updates.resetCounter || "daily",
-      value: updates.value || 0
+      value: updates.value !== undefined ? updates.value : 0
     });
     
     // Hent opdateret liste
     const habits = await loadHabits();
-    window.dispatchEvent(new Event("checkins-change"));
     
     return habits.find((it) => it.id === id) || null;
   } catch (error) {
@@ -109,9 +82,7 @@ export async function deleteHabit(id) {
     // Slet via API
     await apiDelete(`/api/habits/${id}`);
     
-    // Hent opdateret liste
     const habits = await loadHabits();
-    window.dispatchEvent(new Event("checkins-change"));
     
     return habits;
   } catch (error) {
@@ -172,6 +143,7 @@ export default function HabitEdit({
           description: form.description.trim(),
           difficulty: form.difficulty,
           resetCounter: form.resetCounter,
+          value: habit.value
         });
         onSave?.(updated);
       } else {
