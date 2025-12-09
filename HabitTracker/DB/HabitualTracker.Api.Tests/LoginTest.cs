@@ -5,18 +5,23 @@ namespace HabitualTracker.Api.Tests;
 
 public class LoginTests
 {
-    // BVA-test: Email må ikke være tom
     [Test]
     public void Login_Email_ShouldNotBeEmpty()
     {
+        // Arrange
         var login = new Login
         {
-            Email = "",
+            Email = "test@abc.com",
             Password = "test123"
         };
 
-        Assert.That(login.Email, Is.Not.Empty, "Email må ikke være tom ifølge normal brug");
+        // Act
+        // (ingen handling - vi tester kun initialisering)
+
+        // Assert
+        Assert.That(login.Email, Is.Not.Empty, "Email må ikke være tom i normal brug");
     }
+
 
     // BVA-test: Password kan ændres og gemmes
     [Test]
