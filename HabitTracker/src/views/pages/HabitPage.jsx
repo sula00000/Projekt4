@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import HabitEdit, { loadHabits, saveHabits, updateHabit } from "../../Services/HabitEdit";
+import HabitEdit, { loadHabits, updateHabit } from "../../Services/HabitEdit";
 import { recordCheckin } from "../../models/Stats";
 
 export default function HabitPage() {
@@ -44,7 +44,7 @@ export default function HabitPage() {
     await refresh();
 
     if (delta !== 0) {
-      recordCheckin(id, delta, { clampDaily: true });
+      recordCheckin(id, delta, { clampDaily: true }); // Opdater statistikker
     }
   }
 
@@ -68,10 +68,6 @@ export default function HabitPage() {
     refresh();
     setEditing(null);
     setCreating(false);
-  }
-
-  function goToDetail(id) {
-    window.location.href = `/habit/${id}`;
   }
 
   return (
