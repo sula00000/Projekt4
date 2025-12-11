@@ -53,6 +53,12 @@ export default function LoginPage() {
     setError("");
     setSuccess("");
 
+    // mangler email error handtering
+    if (!email.includes("@")) {
+      setError("Ugyldig emailadresse.");
+      return;
+    }
+
     // Validering
     if (password !== confirmPassword) {
       setError("Passwords matcher ikke!");
@@ -71,7 +77,7 @@ export default function LoginPage() {
       });
 
       setSuccess("Bruger oprettet! Du kan nu logge ind.");
-      
+
       // Skift automatisk til login efter 1.5 sekunder
       setTimeout(() => {
         setIsLogin(true);
@@ -89,9 +95,9 @@ export default function LoginPage() {
     <div className="login-page">
       <div className="login-container">
         <h1>{isLogin ? "Log ind" : "Opret bruger"}</h1>
-        
-        <form 
-          onSubmit={isLogin ? handleLogin : handleRegister} 
+
+        <form
+          onSubmit={isLogin ? handleLogin : handleRegister}
           className="login-form"
         >
           <div className="form-row">

@@ -6,7 +6,7 @@ import { apiGet, apiPost, apiPut, apiDelete } from "../utils/apiClient"; // gett
 
 //const STORAGE_KEY = "projekt4_habits_v1"; // tidligere brugt til localStorage
 
-function clampDifficulty(v) {
+export function clampDifficulty(v) {
   // Sørg for at sværhedsgraden er mellem 1 og 5
   const n = Math.floor(Number(v) || 3);
   return Math.min(5, Math.max(1, n));

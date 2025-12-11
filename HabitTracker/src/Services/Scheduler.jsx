@@ -1,6 +1,6 @@
 //Holder styr på reset-tider (kl. 00:00 søndag → mandag) og starter ny periode for routines.
 
-import { loadHabits, updateHabit } from "./HabitEdit";
+//import { loadHabits, updateHabit } from "./HabitEdit";
 
 const LAST_RESET_KEY = "projekt4_last_reset";
 
