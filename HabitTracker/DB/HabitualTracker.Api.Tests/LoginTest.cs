@@ -1,4 +1,5 @@
 using HabitualTracker.Api.Models;
+
 using NUnit.Framework;
 
 namespace HabitualTracker.Api.Tests;
