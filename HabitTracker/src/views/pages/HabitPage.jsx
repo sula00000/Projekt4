@@ -44,7 +44,7 @@ export default function HabitPage() {
     await refresh();
 
     if (delta !== 0) {
-      recordCheckin(id, delta, { clampDaily: true });
+      recordCheckin(id, delta, { clampDaily: true }); // Opdater statistikker
     }
   }
 
