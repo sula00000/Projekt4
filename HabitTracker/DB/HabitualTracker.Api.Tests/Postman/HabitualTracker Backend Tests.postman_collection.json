@@ -1,0 +1,202 @@
+{
+	"info": {
+		"_postman_id": "617fb4fd-ab77-4752-bc6d-3343df8ce699",
+		"name": "HabitualTracker Backend Tests",
+		"description": "Black-box tests af backend-endpoints (login + habits) for HabitualTracker.Api",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "50410796",
+		"_collection_link": "https://sulaimanh0052-6447275.postman.co/workspace/Sulaiman-Hassan's-Workspace~5ccad16c-ee13-4a93-89c0-3824997f3a54/collection/50410796-617fb4fd-ab77-4752-bc6d-3343df8ce699?action=share&source=collection_link&creator=50410796"
+	},
+	"item": [
+		{
+			"name": "1) Login - valid user",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Response contains token\", function () {",
+							"    var json = pm.response.json();",
+							"    pm.expect(json.token || json.Token || json.accessToken).to.exist;",
+							"});",
+							"",
+							"var json = pm.response.json();",
+							"var token = json.token || json.Token || json.accessToken;",
+							"if (token) {",
+							"    pm.collectionVariables.set(\"jwtToken\", token);",
+							"}"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"email\": \"test@example.com\",\n  \"password\": \"1234\"\n}"
+				},
+				"url": {
+					"raw": "{{baseUrl}}/api/login/login",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"api",
+						"login",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "2) Login - wrong password (BV)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 401\", function () {",
+							"    pm.response.to.have.status(401);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"email\": \"test@example.com\",\n  \"password\": \"WRONG_PASS\"\n}"
+				},
+				"url": {
+					"raw": "{{baseUrl}}/api/login/login",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"api",
+						"login",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "3) Create Habit",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200 or 201\", function () {",
+							"    pm.expect([200, 201]).to.include(pm.response.code);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer {{jwtToken}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"name\": \"Løb\",\n  \"description\": \"Løb hver morgen\",\n  \"difficulty\": 3,\n  \"resetCounter\": \"daily\",\n  \"value\": 1\n}"
+				},
+				"url": {
+					"raw": "{{baseUrl}}/api/habits",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"api",
+						"habits"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "4) Get Habits",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Response is array\", function () {",
+							"    var json = pm.response.json();",
+							"    pm.expect(json).to.be.an('array');",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{jwtToken}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{baseUrl}}/api/habits",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"api",
+						"habits"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://localhost:5158"
+		},
+		{
+			"key": "jwtToken",
+			"value": ""
+		}
+	]
+}

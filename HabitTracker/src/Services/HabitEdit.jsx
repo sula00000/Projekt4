@@ -6,7 +6,8 @@ import { apiGet, apiPost, apiPut, apiDelete } from "../utils/apiClient"; // gett
 
 //const STORAGE_KEY = "projekt4_habits_v1"; // tidligere brugt til localStorage
 
-export function clampDifficulty(v) { // Sørg for at sværhedsgraden er mellem 1 og 5
+export function clampDifficulty(v) {
+  // Sørg for at sværhedsgraden er mellem 1 og 5
   const n = Math.floor(Number(v) || 3);
   return Math.min(5, Math.max(1, n));
 }
@@ -38,11 +39,11 @@ export async function createHabit({
       description: String(description).trim(),
       difficulty: clampDifficulty(difficulty),
       resetCounter: resetCounter,
-      value: 0
+      value: 0,
     });
     // Hent opdateret liste
     //const list = await loadHabits();
-    
+
     return habit;
   } catch (error) {
     console.error("Failed to create habit:", error);
@@ -57,14 +58,17 @@ export async function updateHabit(id, updates = {}) {
     await apiPut(`/api/habits/${id}`, {
       name: updates.name,
       description: updates.description || "",
-      difficulty: updates.difficulty !== undefined ? clampDifficulty(updates.difficulty) : 3,
+      difficulty:
+        updates.difficulty !== undefined
+          ? clampDifficulty(updates.difficulty)
+          : 3,
       resetCounter: updates.resetCounter || "daily",
-      value: updates.value !== undefined ? updates.value : 0
+      value: updates.value !== undefined ? updates.value : 0,
     });
-    
+
     // Hent opdateret liste
     const habits = await loadHabits();
-    
+
     return habits.find((it) => it.id === id) || null;
   } catch (error) {
     console.error("Failed to update habit:", error);
@@ -77,9 +81,9 @@ export async function deleteHabit(id) {
   try {
     // Slet via API
     await apiDelete(`/api/habits/${id}`);
-    
+
     const habits = await loadHabits();
-    
+
     return habits;
   } catch (error) {
     console.error("Failed to delete habit:", error);
@@ -139,7 +143,7 @@ export default function HabitEdit({
           description: form.description.trim(),
           difficulty: form.difficulty,
           resetCounter: form.resetCounter,
-          value: habit.value
+          value: habit.value,
         });
         onSave?.(updated);
       } else {
@@ -166,7 +170,7 @@ export default function HabitEdit({
   async function handleDelete() {
     if (!habit?.id) return;
     if (!window.confirm(`Vil du slette habit "${habit.name}"?`)) return;
-    
+
     try {
       await deleteHabit(habit.id);
       onDelete?.(habit.id);
@@ -184,7 +188,7 @@ export default function HabitEdit({
       </div>
 
       <div className="field">
-        <label>Noter</label>
+        <label>Beskrivelse</label>
         <textarea
           name="description"
           value={form.description}
